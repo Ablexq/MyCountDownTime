@@ -6,9 +6,16 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Lifecycle;
+
+import com.trello.rxlifecycle3.RxLifecycle;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.functions.Consumer;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -115,6 +122,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.tv5:
+                Observable.intervalRange(0, 11, 0, 1, TimeUnit.SECONDS)
+                        .subscribe(new Consumer<Long>() {
+                            @Override
+                            public void accept(Long aLong) throws Exception {
+                                if (10 - aLong <= 0) {
+                                    mTv5.setAlpha(1.0f);
+                                    mTv5.setEnabled(true);
+                                    mTv5.setText("获取验证码");
+                                } else {
+                                    mTv5.setAlpha(0.5f);
+                                    mTv5.setEnabled(false);
+                                    mTv5.setText(String.format("%d秒后重试", (10 - aLong)));
+                                }
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+
+                            }
+                        });
                 break;
         }
     }
